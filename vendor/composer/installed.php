@@ -1,12 +1,12 @@
 <?php return array (
   'root' => 
   array (
-    'pretty_version' => '1.0.0+no-version-set',
-    'version' => '1.0.0.0',
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
     'aliases' => 
     array (
     ),
-    'reference' => NULL,
+    'reference' => '29e49734e5799844c97f87e55c4d347a29105b85',
     'name' => 'codeigniter/framework',
   ),
   'versions' => 
@@ -22,12 +22,12 @@
     ),
     'codeigniter/framework' => 
     array (
-      'pretty_version' => '1.0.0+no-version-set',
-      'version' => '1.0.0.0',
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
       'aliases' => 
       array (
       ),
-      'reference' => NULL,
+      'reference' => '29e49734e5799844c97f87e55c4d347a29105b85',
     ),
     'doctrine/instantiator' => 
     array (
@@ -37,6 +37,15 @@
       array (
       ),
       'reference' => 'd56bf6102915de5702778fe20f2de3b2fe570b5b',
+    ),
+    'laminas/laminas-escaper' => 
+    array (
+      'pretty_version' => '2.9.0',
+      'version' => '2.9.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '891ad70986729e20ed2e86355fcf93c9dc238a5f',
     ),
     'mikey179/vfsstream' => 
     array (
@@ -86,6 +95,15 @@
       array (
       ),
       'reference' => 'a12f7e301eb7258bb68acd89d4aefa05c2906cae',
+    ),
+    'phpoffice/phpword' => 
+    array (
+      'pretty_version' => '0.18.2',
+      'version' => '0.18.2.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'aca10785cf68dc95d7f6fac4fe854979fef3f8db',
     ),
     'phpspec/prophecy' => 
     array (

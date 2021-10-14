@@ -8,13 +8,29 @@
 
     class Accounts extends RestController{
 
+        public function __construct()
+        {
+            parent::__construct();
+
+            if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+                // The request is using the POST method
+                header('Access-Control-Allow-Headers: x-requested-with');
+                header('Access-Control-Allow-Methods: *');
+                header('Access-Control-Allow-Origin: *');
+            } else {
+                header('Access-Control-Allow-Origin: *');
+                header('Content-type: application/json');
+            }
+           
+        }
+
 
         public function user_accounts_get($id){
           //Get all user accounts and its associated opportunities 
-            $data['accounts'] = $this->account_model->user_accounts($id);
+            $data = $this->account_model->user_accounts($id);
 
             //Check if Accounts exist else display accounts not found
-            if(empty($data['accounts'])){
+            if(empty($data)){
 
                 $this->response([
                     'status' => false,

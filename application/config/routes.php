@@ -4,6 +4,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $route['default_controller'] = 'accounts/1';
 
+//Word
+$route['gen'] = 'gen/index';
+
 //Accounts routes
 $route['accounts/create'] = 'accounts/create';
 $route['accounts/update'] = 'accounts/update';

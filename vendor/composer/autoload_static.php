@@ -32,6 +32,11 @@ class ComposerStaticInit719f3c265dbad37a23d19133a3c14bd4
         'P' => 
         array (
             'Prophecy\\' => 9,
+            'PhpOffice\\PhpWord\\' => 18,
+        ),
+        'L' => 
+        array (
+            'Laminas\\Escaper\\' => 16,
         ),
         'D' => 
         array (
@@ -66,6 +71,14 @@ class ComposerStaticInit719f3c265dbad37a23d19133a3c14bd4
         'Prophecy\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy',
+        ),
+        'PhpOffice\\PhpWord\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
+        ),
+        'Laminas\\Escaper\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laminas/laminas-escaper/src',
         ),
         'Doctrine\\Instantiator\\' => 
         array (
