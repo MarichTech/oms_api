@@ -2,10 +2,20 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 
-$route['default_controller'] = 'accounts/1';
+$route['default_controller'] = 'students';
 
-//Word
-$route['gen'] = 'gen/index';
+//Login Routes
+
+//Student routes
+$route['students/add'] = 'students/add_student';
+$route['students/import'] = 'students/importStudents';
+$route['students/update'] = 'students/update';
+$route['students'] = 'students/get_students';
+$route['students/edit/(:any)'] = 'students/get_student/$1';
+
+$route['students/delete/(:any)'] = 'students/delete_student/$1';
+////-
+
 
 //Accounts routes
 $route['accounts/create'] = 'accounts/create';

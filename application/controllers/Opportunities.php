@@ -11,17 +11,35 @@
 
     class Opportunities extends RestController{
 
+        public function __construct()
+        {
+            parent::__construct();
+
+            if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+                // The request is using the POST method
+                header('Access-Control-Allow-Headers: x-requested-with');
+                header('Access-Control-Allow-Methods: *');
+                header('Access-Control-Allow-Origin: *');
+            } else {
+                header('Access-Control-Allow-Origin: *');
+                header('Content-type: application/json');
+            }
+           
+        }
+
+
         public function account_opportunities_get($id){
 
-            $data['opportunity'] = $this->opportunity_model->get_account_opportunities($id);
+            $data= $this->opportunity_model->get_account_opportunities($id);
 
              //Check if Opportunities exist else display opportunities not found
-             if(empty($data['opportunity'])){
+             if(empty($data)){
 
                 $this->response([
 					"status" => "false",
 					"message" => "OPPORTUNITY NOT FOUND",
 				], 400);
+            
 
 
               }else{

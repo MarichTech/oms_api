@@ -13,7 +13,8 @@
 	"require": {
 		"php": ">=5.3.7",
 		"chriskacerguis/codeigniter-restserver": "^3.1",
-		"phpoffice/phpword": "^0.18.2"
+		"phpoffice/phpword": "^0.18.2",
+		"phpoffice/phpspreadsheet": "^1.18"
 	},
 	"suggest": {
 		"paragonie/random_compat": "Provides better randomness in PHP 5.x"

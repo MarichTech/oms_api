@@ -2,12 +2,8 @@
     class Account_model extends CI_Model{
 
         public function _construct(){
-
-         
-
+            //Load DB
             $this->load->database();
-
-       
         }
 
         public function get_account($id){
