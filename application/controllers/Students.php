@@ -26,17 +26,15 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
                 header('Content-type: application/json');
             }
 
-            $this->load->model("students_model", "students");
-
-         
-           
+            $this->load->model("students_model", "students");  
+            $this->load->helper('string');    
         }
 
-        public function get_students_get(){
+        public function get_students_get($school){
 
 
             //Get a single account
-              $data= $this->students->get_students();
+              $data= $this->students->get_students($school);
   
               //Check if Accounts exist else display accounts not found
               if(empty($data)){
@@ -71,7 +69,9 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
           }
 
 
-        public function add_student_post(){
+        
+        
+          public function add_student_post(){
 
             $data = array(
                 //Format 'name_of_db_column' => data you want to store in the column(you can use post to get data from form)
@@ -161,88 +161,142 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
         }
 
 
+// file upload functionality
+public function importStudents_post()
+{
 
-        public function importStudents_post()
-        {
+    $data = array();
+  
+                // If file uploaded
+                if(!empty($_FILES['doc']['name'])) { 
+                    // get file extension
+                    $extension = pathinfo($_FILES['doc']['name'], PATHINFO_EXTENSION);
 
-        $path 		= 'documents/users/';
-		$json 		= [];
-		$this->upload_config($path);
-		if (!$this->upload->do_upload('doc')) {
-
-            $this->response([
-                'status' => false,
-                'message' => showErrorMessage($this->upload->display_errors()),
-            ],  400);
-		} else {
-			$file_data 	= $this->upload->data();
-			$file_name 	= $path.$file_data['file_name'];
-			$arr_file 	= explode('.', $file_name);
-			$extension 	= end($arr_file);
-			if('csv' == $extension) {
-				$reader 	= new \PhpOffice\PhpSpreadsheet\Reader\Csv();
-			} else {
-				$reader 	= new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-			}
-			$spreadsheet 	= $reader->load($file_name);
-			$sheet_data 	= $spreadsheet->getActiveSheet()->toArray();
-            $list =[];
-			foreach($sheet_data as $key => $val) {
-				if($key != 0) {
-                  //  var_dump($val[0]);
-                  //  var_dump($val);
-					$result 	= $this->students->get(strval($val[0]), strval($val[1]));
-					if($result) {
-					} else {
-					
-                        $list = array(
-                            'fullnames'					=> $val[0],
-							'email'			=> $val[1],
-							'school'				=> $val[2],
-							'phone_no'					=> $val[3],
-							'nationality'					=> $val[4],
+                    if($extension == 'csv'){
+                        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+                    } elseif($extension == 'xlsx') {
+                        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+                    } else {
+                        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+                    }
+                    // file path
+                    $spreadsheet = $reader->load($_FILES['doc']['tmp_name']);
+                    $allDataInSheet = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
                 
-                           );
-					}
-				}
-			}
-			if(file_exists($file_name))
-				unlink($file_name);
-			if(count($list) > 0) {
-				$result 	=  $this->students->add_student($list);
-				if($result) {
-					$this->response([
-                        'status' => true,
-                        'message' => 'STUDENTS IMPORTED'
-                    ], 200); 
-				} else {
-                    $this->response([
-                        'status' => false,
-                        'message' => 'FAILED TO IMPORT STUDENT'
-                    ],  400);
-				}
-			} else {
-                $result 	=  $this->students->add_student($list);
-                $this->response([
-                    'status' => false,
-                    'message' => 'NO NEW RECORD FOUND'
-                ],  400);
-			}
-		}
-		echo json_encode($json);
-	}
+                    // array Count
+                    $arrayCount = count($allDataInSheet);
+                    $flag = 0;
+                    $createArray = array('fullnames', 'email', 'school', 'phone_no', 'nationality');
+                    $makeArray = array('fullnames' => 'fullnames', 'email' => 'email', 'school' => 'school', 'phone_no' => 'phone_no', 'nationality' => 'nationality');
+                    $SheetDataKey = array();
+                    foreach ($allDataInSheet as $dataInSheet) {
+                        foreach ($dataInSheet as $key => $value) {
+                            if (in_array(trim($value), $createArray)) {
+                                $value = preg_replace('/\s+/', '', $value);
+                                $SheetDataKey[trim($value)] = $key;
+                            } 
+                        }
+                    }
+                    $dataDiff = array_diff_key($makeArray, $SheetDataKey);
+                    if (empty($dataDiff)) {
+                        $flag = 1;
+                    }
+                    // match excel sheet column
+                    if ($flag == 1) {
+                        for ($i = 2; $i <= $arrayCount; $i++) {
+                            
+                            $fullnames = $SheetDataKey['fullnames'];
+                            $email = $SheetDataKey['email'];
+                            $school = $SheetDataKey['school'];
+                            $phone_no = $SheetDataKey['phone_no'];
+                            $nationality = $SheetDataKey['nationality'];
 
-	public function upload_config($path) {
-		if (!is_dir($path)) 
-			mkdir($path, 0777, TRUE);		
-		$config['upload_path'] 		= './'.$path;		
-		$config['allowed_types'] 	= 'csv|CSV|xlsx|XLSX|xls|XLS';
-		$config['max_filename']	 	= '255';
-		$config['encrypt_name'] 	= TRUE;
-		$config['max_size'] 		= 4096; 
-		$this->load->library('upload', $config);
-    
-        
+                            $fullnames = filter_var(trim($allDataInSheet[$i][$fullnames]), FILTER_SANITIZE_STRING);
+                            $school = filter_var(trim($allDataInSheet[$i][$school]), FILTER_SANITIZE_STRING);
+                            $email = filter_var(trim($allDataInSheet[$i][$email]), FILTER_SANITIZE_EMAIL);
+                            $phone_no = filter_var(trim($allDataInSheet[$i][$phone_no]), FILTER_SANITIZE_STRING);
+                            $nationality = filter_var(trim($allDataInSheet[$i][$nationality]), FILTER_SANITIZE_STRING);
+
+                            $password = random_string('alnum', 5);
+
+                                    if($fullnames != null){
+                                        $fetchData[] = array('fullnames' => $fullnames, 'school' => $school, 'email' => $email, 'phone_no' => $phone_no, 'nationality' => $nationality);
+                                        $userEmails[] = array('email' => $email, 'password' => $password);
+                               
+                                    }
+                                    
+                            
+                        }   
+                        $data = $fetchData;
+                        $this->sendEmailWithLoginCredentials($userEmails);
+                        $this->students->setBatchImport($fetchData);
+                      
+                        $result =  $this->students->importData();
+                     
+                        if($result) {
+
+                            $this->response([
+                                $data,
+                                'status' => true,
+                                'message' => 'STUDENTS IMPORTED'
+                            ], 200); 
+                        } else {
+                            $this->response([
+                                'status' => false,
+                                'message' => 'FAILED TO IMPORT STUDENT'
+                            ],  400);
+                        }
+                    } else {
+
+                        $this->response([
+                            'status' => false,
+                            'message' => 'Please import correct file, did not match excel sheet column'
+                        ],  400);
+                    }
+
+           // $this->load->view('spreadsheet/display', $data);
+                     
     }
+
+
+}
+
+
+
+public function sendEmailWithLoginCredentials($emails){
+
+    for ($i=0; $i < count($emails); $i++) { 
+        var_dump($emails[$i]['email']);
+        } 
+
+     
+    // $this->load->config('email');
+    // $this->load->library('email');
+
+    // $from = $this->config->item('smtp_user');
+    // $to = $post['email'];
+    // $subject = "My Future App Student Login Credentials";
+    // $message = "My Future App Student Login Credentials \n  Email:" . $email . "\r\n Password: " . $password . "\r\n You can now login to https://myfutureapp.org/ student portal.";
+
+    // $this->email->set_newline("\r\n");
+    // $this->email->from($from, "MyFutureApp Bot");
+    // //$this->email->to('trulance247@gmail.com'); //Test
+    // $this->email->to($email);
+    // $this->email->subject($subject);
+    // $this->email->message($message);
+
+    // if ($this->email->send()) {
+    // 	$resp['msg'] = 'Email sent.';
+    // 	$resp['status'] = true;
+    // 	// echo 'Your Email has successfully been sent.';
+    // } else {
+
+    // 	$resp['msg'] = $this->email->print_debugger();
+    // 	$resp['status'] = false;
+    // }
+
+}
+
+
 //-----------End------------------------------------------------------------------------
     }
