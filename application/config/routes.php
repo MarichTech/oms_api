@@ -6,17 +6,6 @@ $route['default_controller'] = 'students';
 
 //Login Routes
 
-//Student routes
-$route['students/add'] = 'students/add_student';
-$route['students/import'] = 'students/importStudents';
-$route['students/update'] = 'students/update';
-$route['students/(:any)'] = 'students/get_students/$1';
-$route['students/edit/(:any)'] = 'students/get_student/$1';
-
-$route['students/delete/(:any)'] = 'students/delete_student/$1';
-////-
-
-
 //Accounts routes
 $route['accounts/create'] = 'accounts/create';
 $route['accounts/update'] = 'accounts/update';
